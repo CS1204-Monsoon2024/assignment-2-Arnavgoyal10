@@ -2,7 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-class CustomHashTable
+class HashTable
 {
 private:
     std::vector<int> hashTableArray;
@@ -59,7 +59,7 @@ private:
     }
 
 public:
-    CustomHashTable(int initialCapacity = 5)
+    HashTable(int initialCapacity = 5)
     {
         tableCapacity = findNextPrime(initialCapacity);
         hashTableArray = std::vector<int>(tableCapacity, -1);
