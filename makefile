@@ -1,5 +1,5 @@
 default:
-	g++ -std=c++17 -Wall -o main.out main.cpp
+	g++ -o main main.cpp HashTable.cpp
 
 clean:
 	rm *.out
