@@ -10,12 +10,12 @@ private:
     int count;
     double loadFactorThreshold;
 
-    int computeHash(int key)
+    int hash(int key)
     {
         return key % size;
     }
 
-    int findNextPrime(int n)
+    int nextPrime(int n)
     {
         while (true)
         {
@@ -34,15 +34,15 @@ private:
         }
     }
 
-    void expandTable()
+    void resize()
     {
-        int newSize = findNextPrime(size * 2);
+        int newSize = nextPrime(size * 2);
         std::vector<int> newTable(newSize, -1);
 
         for (int i = 0; i < size; i++)
         {
             if (table[i] != -1 && table[i] != -2)
-            { // -2 represents a deleted slot
+            {
                 int key = table[i];
                 int index = key % newSize;
                 int j = 0;
@@ -60,19 +60,19 @@ private:
 public:
     HashTable(int initSize = 5)
     {
-        size = findNextPrime(initSize);
-        table = std::vector<int>(size, -1); // -1 represents an empty slot
+        size = nextPrime(initSize);
+        table = std::vector<int>(size, -1);
         count = 0;
         loadFactorThreshold = 0.8;
     }
 
-    void addKey(int key)
+    void insert(int key)
     {
         if (count >= loadFactorThreshold * size)
         {
-            expandTable();
+            resize();
         }
-        int index = computeHash(key);
+        int index = hash(key);
         int j = 0;
 
         while (j < size)
@@ -94,9 +94,9 @@ public:
         std::cout << "Max probing limit reached!\n";
     }
 
-    void deleteKey(int key)
+    void remove(int key)
     {
-        int index = computeHash(key);
+        int index = hash(key);
         int j = 0;
 
         while (j < size)
@@ -118,9 +118,9 @@ public:
         std::cout << "Element not found\n";
     }
 
-    int findKey(int key)
+    int search(int key)
     {
-        int index = computeHash(key);
+        int index = hash(key);
         int j = 0;
 
         while (j < size)
@@ -139,7 +139,7 @@ public:
         return -1;
     }
 
-    void displayTable()
+    void printTable()
     {
         for (int i = 0; i < size; i++)
         {
