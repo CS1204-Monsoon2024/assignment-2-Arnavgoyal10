@@ -19,15 +19,8 @@ int main()
     ht.insert(29);
     ht.printTable();
 
-    auto find = ht.search(22);
-    if (find.has_value())
-    {
-        std::cout << "Found value: " << find.value() << std::endl;
-    }
-    else
-    {
-        std::cout << "Key 22 not found." << std::endl;
-    }
+    int find = ht.search(22);
+    std::cout << "Found at:" << find << std::endl;
 
     return 0;
 }

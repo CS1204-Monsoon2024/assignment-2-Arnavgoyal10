@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <optional>
 
 class HashTable
 {
@@ -17,7 +16,7 @@ private:
         HashEntry(int k, int v) : key(k), value(v), deleted(false) {}
     };
 
-    std::vector<std::optional<HashEntry>> table;
+    std::vector<HashEntry *> table; // Use pointers to handle empty entries
     int capacity;
     int size;
 
@@ -30,7 +29,7 @@ private:
     {
         int old_capacity = capacity;
         capacity *= 2;
-        std::vector<std::optional<HashEntry>> new_table(capacity);
+        std::vector<HashEntry *> new_table(capacity, nullptr); // Initialize with nullptr
 
         for (const auto &entry : table)
         {
@@ -42,14 +41,22 @@ private:
                 {
                     i++;
                 }
-                new_table[(index + i * i) % capacity] = *entry;
+                new_table[(index + i * i) % capacity] = entry; // Reuse the existing entry pointer
             }
         }
         table = std::move(new_table);
     }
 
 public:
-    HashTable(int initial_capacity = 8) : capacity(initial_capacity), size(0), table(initial_capacity) {}
+    HashTable(int initial_capacity = 8) : capacity(initial_capacity), size(0), table(initial_capacity, nullptr) {}
+
+    ~HashTable()
+    {
+        for (auto entry : table)
+        {
+            delete entry; // Clean up dynamically allocated memory
+        }
+    }
 
     void insert(int key)
     {
@@ -64,16 +71,17 @@ public:
         {
             if (table[(index + i * i) % capacity]->key == key)
             {
-                table[(index + i * i) % capacity]->value = key;
+                table[(index + i * i) % capacity]->value = key; // Update existing value
                 return;
             }
             i++;
         }
-        table[(index + i * i) % capacity] = HashEntry(key, key);
+
+        table[(index + i * i) % capacity] = new HashEntry(key, key); // Insert new entry
         size++;
     }
 
-    std::optional<int> search(int key)
+    int search(int key)
     {
         int index = hash(key);
         int i = 0;
@@ -85,7 +93,7 @@ public:
             }
             i++;
         }
-        return {};
+        return -1; // Return -1 if not found (can be a sentinel value for "not found")
     }
 
     bool remove(int key)

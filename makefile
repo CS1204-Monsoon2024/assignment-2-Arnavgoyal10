@@ -1,20 +1,5 @@
-
-CXX = g++
-CXXFLAGS = -std=c++17 -Wall
-
-
-TARGET = main.out
-
-
-SRCS = main.cpp HashTable.cpp
-
-
-default: $(TARGET)
-
-
-$(TARGET): $(SRCS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRCS)
-
+default:
+	g++ -o main.out main.cpp HashTable.cpp
 
 clean:
-	rm -f $(TARGET)
+	rm *.out
