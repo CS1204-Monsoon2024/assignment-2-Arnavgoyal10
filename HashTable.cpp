@@ -67,11 +67,12 @@ public:
 
         int index = hash(key);
         int i = 0;
-        while (table[(index + i * i) % capacity] && !table[(index + i * i) % capacity]->deleted)
+        while (table[(index + i * i) % capacity])
         {
             if (table[(index + i * i) % capacity]->key == key)
             {
-                table[(index + i * i) % capacity]->value = key; // Update existing value
+                table[(index + i * i) % capacity]->value = key;     // Update existing value
+                table[(index + i * i) % capacity]->deleted = false; // Restore if it was deleted
                 return;
             }
             i++;
@@ -89,7 +90,7 @@ public:
         {
             if (table[(index + i * i) % capacity]->key == key && !table[(index + i * i) % capacity]->deleted)
             {
-                return table[(index + i * i) % capacity]->value;
+                return (index + i * i) % capacity; // Return the index instead of the value
             }
             i++;
         }
