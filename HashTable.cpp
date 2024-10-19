@@ -15,35 +15,13 @@ private:
         HashEntry(int k) : key(k), deleted(false) {}
     };
 
-    std::vector<HashEntry *> table;
+    std::vector<HashEntry *> table; // Use pointers to handle empty entries
     int capacity;
     int size;
 
     int hash(int key)
     {
         return key % capacity;
-    }
-
-    void resize()
-    {
-        int old_capacity = capacity;
-        capacity *= 2;
-        std::vector<HashEntry *> new_table(capacity, nullptr);
-
-        for (const auto &entry : table)
-        {
-            if (entry && !entry->deleted)
-            {
-                int index = hash(entry->key);
-                int i = 0;
-                while (new_table[(index + i) % capacity])
-                {
-                    i++;
-                }
-                new_table[(index + i) % capacity] = entry;
-            }
-        }
-        table = std::move(new_table);
     }
 
 public:
@@ -53,30 +31,25 @@ public:
     {
         for (auto entry : table)
         {
-            delete entry;
+            delete entry; // Clean up dynamically allocated memory
         }
     }
 
     void insert(int key)
     {
-        if (float(size) / capacity >= 0.8)
-        {
-            resize();
-        }
-
         int index = hash(key);
         int i = 0;
         while (table[(index + i) % capacity])
         {
             if (table[(index + i) % capacity]->key == key)
             {
-                table[(index + i) % capacity]->deleted = false;
+                table[(index + i) % capacity]->deleted = false; // Restore if it was deleted
                 return;
             }
             i++;
         }
 
-        table[(index + i) % capacity] = new HashEntry(key);
+        table[(index + i) % capacity] = new HashEntry(key); // Insert new entry
         size++;
     }
 
@@ -88,7 +61,7 @@ public:
         {
             if (table[(index + i) % capacity]->key == key && !table[(index + i) % capacity]->deleted)
             {
-                return (index + i) % capacity; // Return the index where the key is found
+                return (index + i) % capacity; // Return the index
             }
             i++;
         }
