@@ -5,157 +5,155 @@
 class HashTable
 {
 private:
-    std::vector<int> hashTableArray;
-    int tableCapacity;
-    int totalElements;
-    double loadFactorLimit;
+    std::vector<int> table;
+    int size;
+    int count;
+    double loadFactorThreshold;
 
-    // Hash function
-    int generateHash(int element)
+    int computeHash(int key)
     {
-        return element % tableCapacity;
+        return key % size;
     }
 
-    int findNextPrime(int number)
+    int findNextPrime(int n)
     {
         while (true)
         {
-            bool primeCheck = true;
-            for (int i = 2; i <= std::sqrt(number); i++)
+            bool isPrime = true;
+            for (int i = 2; i <= std::sqrt(n); i++)
             {
-                if (number % i == 0)
+                if (n % i == 0)
                 {
-                    primeCheck = false;
+                    isPrime = false;
                     break;
                 }
             }
-            if (primeCheck)
-                return number;
-            number++;
+            if (isPrime)
+                return n;
+            n++;
         }
     }
 
-    void resizeTable()
+    void expandTable()
     {
-        int updatedCapacity = findNextPrime(tableCapacity * 2);
-        std::vector<int> resizedArray(updatedCapacity, -1);
+        int newSize = findNextPrime(size * 2);
+        std::vector<int> newTable(newSize, -1);
 
-        for (int i = 0; i < tableCapacity; i++)
+        for (int i = 0; i < size; i++)
         {
-            if (hashTableArray[i] != -1 && hashTableArray[i] != -2)
+            if (table[i] != -1 && table[i] != -2)
             { // -2 represents a deleted slot
-                int element = hashTableArray[i];
-                int newIndex = element % updatedCapacity;
-                int probeCounter = 0;
-                while (resizedArray[(newIndex + probeCounter * probeCounter) % updatedCapacity] != -1)
+                int key = table[i];
+                int index = key % newSize;
+                int j = 0;
+                while (newTable[(index + j * j) % newSize] != -1)
                 {
-                    probeCounter++;
+                    j++;
                 }
-                resizedArray[(newIndex + probeCounter * probeCounter) % updatedCapacity] = element;
+                newTable[(index + j * j) % newSize] = key;
             }
         }
-        hashTableArray = resizedArray;
-        tableCapacity = updatedCapacity;
+        table = newTable;
+        size = newSize;
     }
 
 public:
-    HashTable(int initialCapacity = 5)
+    HashTable(int initSize = 5)
     {
-        tableCapacity = findNextPrime(initialCapacity);
-        hashTableArray = std::vector<int>(tableCapacity, -1);
-        totalElements = 0;
-        loadFactorLimit = 0.8;
+        size = findNextPrime(initSize);
+        table = std::vector<int>(size, -1); // -1 represents an empty slot
+        count = 0;
+        loadFactorThreshold = 0.8;
     }
 
-    // Insert an element
-    void insertElement(int element)
+    void addKey(int key)
     {
-        if (totalElements >= loadFactorLimit * tableCapacity)
+        if (count >= loadFactorThreshold * size)
         {
-            resizeTable();
+            expandTable();
         }
-        int hashedIndex = generateHash(element);
-        int probeCounter = 0;
+        int index = computeHash(key);
+        int j = 0;
 
-        while (probeCounter < tableCapacity)
+        while (j < size)
         {
-            int calculatedIndex = (hashedIndex + (probeCounter * probeCounter)) % tableCapacity;
-            if (hashTableArray[calculatedIndex] == element)
+            int probeIndex = (index + (j * j)) % size;
+            if (table[probeIndex] == key)
             {
                 std::cout << "Duplicate key insertion is not allowed\n";
                 return;
             }
-            if (hashTableArray[calculatedIndex] == -1 || hashTableArray[calculatedIndex] == -2)
+            if (table[probeIndex] == -1 || table[probeIndex] == -2)
             {
-                hashTableArray[calculatedIndex] = element;
-                totalElements++;
+                table[probeIndex] = key;
+                count++;
                 return;
             }
-            probeCounter++;
+            j++;
         }
         std::cout << "Max probing limit reached!\n";
     }
 
-    void removeElement(int element)
+    void deleteKey(int key)
     {
-        int hashedIndex = generateHash(element);
-        int probeCounter = 0;
+        int index = computeHash(key);
+        int j = 0;
 
-        while (probeCounter < tableCapacity)
+        while (j < size)
         {
-            int calculatedIndex = (hashedIndex + (probeCounter * probeCounter)) % tableCapacity;
-            if (hashTableArray[calculatedIndex] == element)
+            int probeIndex = (index + (j * j)) % size;
+            if (table[probeIndex] == key)
             {
-                hashTableArray[calculatedIndex] = -2;
-                totalElements--;
+                table[probeIndex] = -2;
+                count--;
                 return;
             }
-            else if (hashTableArray[calculatedIndex] == -1)
+            else if (table[probeIndex] == -1)
             {
                 std::cout << "Element not found\n";
                 return;
             }
-            probeCounter++;
+            j++;
         }
         std::cout << "Element not found\n";
     }
 
-    int searchElement(int element)
+    int findKey(int key)
     {
-        int hashedIndex = generateHash(element);
-        int probeCounter = 0;
+        int index = computeHash(key);
+        int j = 0;
 
-        while (probeCounter < tableCapacity)
+        while (j < size)
         {
-            int calculatedIndex = (hashedIndex + (probeCounter * probeCounter)) % tableCapacity;
-            if (hashTableArray[calculatedIndex] == element)
+            int probeIndex = (index + (j * j)) % size;
+            if (table[probeIndex] == key)
             {
-                return calculatedIndex;
+                return probeIndex;
             }
-            else if (hashTableArray[calculatedIndex] == -1)
+            else if (table[probeIndex] == -1)
             {
                 return -1;
             }
-            probeCounter++;
+            j++;
         }
         return -1;
     }
 
     void displayTable()
     {
-        for (int i = 0; i < tableCapacity; i++)
+        for (int i = 0; i < size; i++)
         {
-            if (hashTableArray[i] == -1)
+            if (table[i] == -1)
             {
                 std::cout << "- ";
             }
-            else if (hashTableArray[i] == -2)
+            else if (table[i] == -2)
             {
                 std::cout << "- ";
             }
             else
             {
-                std::cout << hashTableArray[i] << " ";
+                std::cout << table[i] << " ";
             }
         }
         std::cout << "\n";

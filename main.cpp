@@ -6,24 +6,21 @@ int main()
     HashTable ht(initialSize);
 
     // Example test case
-    ht.insertElement(1);
+    ht.addKey(1);
     ht.displayTable();
-    ht.insertElement(6);
+    ht.addKey(6);
     ht.displayTable();
-    ht.insertElement(15);
+    ht.addKey(15);
     ht.displayTable();
-    ht.insertElement(25);
+    ht.addKey(25);
     ht.displayTable();
-    ht.removeElement(15);
+    ht.deleteKey(15);
     ht.displayTable();
-    ht.insertElement(29);
+    ht.addKey(29);
     ht.displayTable();
 
-    int find = ht.searchElement(22);
-    if (find != -1)
-        std::cout << "Found at: " << find << std::endl;
-    else
-        std::cout << "Element not found" << std::endl;
+    int find = ht.findKey(22);
+    std::cout << "Found at: " << find << std::endl;
 
     return 0;
 }
