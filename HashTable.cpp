@@ -10,10 +10,9 @@ private:
     struct HashEntry
     {
         int key;
-        int value;
         bool deleted;
 
-        HashEntry(int k, int v) : key(k), value(v), deleted(false) {}
+        HashEntry(int k) : key(k), deleted(false) {}
     };
 
     std::vector<HashEntry *> table; // Use pointers to handle empty entries
@@ -71,14 +70,13 @@ public:
         {
             if (table[(index + i * i) % capacity]->key == key)
             {
-                table[(index + i * i) % capacity]->value = key;     // Update existing value
                 table[(index + i * i) % capacity]->deleted = false; // Restore if it was deleted
                 return;
             }
             i++;
         }
 
-        table[(index + i * i) % capacity] = new HashEntry(key, key); // Insert new entry
+        table[(index + i * i) % capacity] = new HashEntry(key); // Insert new entry
         size++;
     }
 
@@ -90,11 +88,11 @@ public:
         {
             if (table[(index + i * i) % capacity]->key == key && !table[(index + i * i) % capacity]->deleted)
             {
-                return (index + i * i) % capacity; // Return the index instead of the value
+                return (index + i * i) % capacity; // Return the index
             }
             i++;
         }
-        return -1; // Return -1 if not found (can be a sentinel value for "not found")
+        return -1; // Return -1 if not found
     }
 
     bool remove(int key)
@@ -116,16 +114,15 @@ public:
 
     void printTable()
     {
-        std::cout << "HashTable:\n";
         for (int i = 0; i < capacity; i++)
         {
             if (table[i] && !table[i]->deleted)
             {
-                std::cout << "[" << i << "]: " << table[i]->key << std::endl;
+                std::cout << table[i]->key << " ";
             }
             else
             {
-                std::cout << "[" << i << "]: empty\n";
+                std::cout << "- ";
             }
         }
         std::cout << std::endl;
