@@ -2,30 +2,30 @@
 
 int main()
 {
-    int initialSize = 16; // Use the initial size as given in the expected output
+    int initialSize = 16; // Set initial size to 16 as per the expected output
     HashTable ht(initialSize);
 
-    // Example test case as per the expected output
+    // Insert elements and print the table after each insertion as per the expected output
     ht.insert(13);
-    ht.printTable(); // Should match first row in expected output
+    ht.printTable(); // Should match the first line in the expected output
 
     ht.insert(3);
-    ht.printTable(); // Second row
+    ht.printTable(); // Should match the second line in the expected output
 
     ht.insert(20);
-    ht.printTable(); // Third row
+    ht.printTable(); // Should match the third line
 
     ht.insert(4);
-    ht.printTable(); // Fourth row
+    ht.printTable(); // Fourth line
 
     ht.insert(21);
-    ht.printTable(); // Fifth row
+    ht.printTable(); // Fifth line
 
-    int find = ht.search(22);                       // Search for a number not present in the table
-    std::cout << "Found at: " << find << std::endl; // Should print -1
+    int find = ht.search(22);                       // Search for a number that is not present
+    std::cout << "Found at: " << find << std::endl; // Should return -1
 
     find = ht.search(21);                           // Search for a number that is present
-    std::cout << "Found at: " << find << std::endl; // Should print the index of 21 (which is 5)
+    std::cout << "Found at: " << find << std::endl; // Should return 5
 
     return 0;
 }

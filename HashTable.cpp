@@ -15,7 +15,7 @@ private:
         HashEntry(int k) : key(k), deleted(false) {}
     };
 
-    std::vector<HashEntry *> table; // Use pointers to handle empty entries
+    std::vector<HashEntry *> table;
     int capacity;
     int size;
 
@@ -28,7 +28,7 @@ private:
     {
         int old_capacity = capacity;
         capacity *= 2;
-        std::vector<HashEntry *> new_table(capacity, nullptr); // Initialize with nullptr
+        std::vector<HashEntry *> new_table(capacity, nullptr);
 
         for (const auto &entry : table)
         {
@@ -36,11 +36,11 @@ private:
             {
                 int index = hash(entry->key);
                 int i = 0;
-                while (new_table[(index + i * i) % capacity])
+                while (new_table[(index + i) % capacity])
                 {
                     i++;
                 }
-                new_table[(index + i * i) % capacity] = entry; // Reuse the existing entry pointer
+                new_table[(index + i) % capacity] = entry;
             }
         }
         table = std::move(new_table);
@@ -53,7 +53,7 @@ public:
     {
         for (auto entry : table)
         {
-            delete entry; // Clean up dynamically allocated memory
+            delete entry;
         }
     }
 
@@ -66,17 +66,17 @@ public:
 
         int index = hash(key);
         int i = 0;
-        while (table[(index + i * i) % capacity])
+        while (table[(index + i) % capacity])
         {
-            if (table[(index + i * i) % capacity]->key == key)
+            if (table[(index + i) % capacity]->key == key)
             {
-                table[(index + i * i) % capacity]->deleted = false; // Restore if it was deleted
+                table[(index + i) % capacity]->deleted = false;
                 return;
             }
             i++;
         }
 
-        table[(index + i * i) % capacity] = new HashEntry(key); // Insert new entry
+        table[(index + i) % capacity] = new HashEntry(key);
         size++;
     }
 
@@ -84,11 +84,11 @@ public:
     {
         int index = hash(key);
         int i = 0;
-        while (table[(index + i * i) % capacity])
+        while (table[(index + i) % capacity])
         {
-            if (table[(index + i * i) % capacity]->key == key && !table[(index + i * i) % capacity]->deleted)
+            if (table[(index + i) % capacity]->key == key && !table[(index + i) % capacity]->deleted)
             {
-                return (index + i * i) % capacity; // Return the index
+                return (index + i) % capacity; // Return the index where the key is found
             }
             i++;
         }
@@ -99,11 +99,11 @@ public:
     {
         int index = hash(key);
         int i = 0;
-        while (table[(index + i * i) % capacity])
+        while (table[(index + i) % capacity])
         {
-            if (table[(index + i * i) % capacity]->key == key && !table[(index + i * i) % capacity]->deleted)
+            if (table[(index + i) % capacity]->key == key && !table[(index + i) % capacity]->deleted)
             {
-                table[(index + i * i) % capacity]->deleted = true;
+                table[(index + i) % capacity]->deleted = true;
                 size--;
                 return true;
             }
